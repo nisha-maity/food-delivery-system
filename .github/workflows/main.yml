@@ -1,0 +1,35 @@
+name: Food Delivery CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check project files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f script.js
+
+      - name: Test HTML
+        run: |
+          grep -q "<html" index.html
+          grep -q "<script" index.html
+
+      - name: Package application
+        run: zip -r food-delivery-system.zip index.html style.css script.js
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: food-delivery-system
+          path: food-delivery-system.zip
